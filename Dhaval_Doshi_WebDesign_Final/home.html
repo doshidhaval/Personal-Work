@@ -1,0 +1,379 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   
+    <meta name="description" content="Simple responsive css framework">
+    <meta name="author" content="Dhaval Doshi">
+
+    <link href="plugins/Metro-UI-CSS-master/docs/css/metro-bootstrap.css" rel="stylesheet">
+    <link href="plugins/Metro-UI-CSS-master/docs/css/metro-bootstrap-responsive.css" rel="stylesheet">
+    <link href="plugins/Metro-UI-CSS-master/docs/css/iconFont.css" rel="stylesheet">
+
+    <!-- Load JavaScript Libraries -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js" ></script>
+    <script src="plugins/Metro-UI-CSS-master/docs/js/jquery/jquery.widget.min.js"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
+    <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=weather"></script>-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <!-- Metro UI CSS JavaScript plugins -->
+    <script src="plugins/Metro-UI-CSS-master/docs/js/load-metro.js"></script>
+    <script src="plugins/Metro-UI-CSS-master/docs/js/metro/metro-dropdown.js"></script>
+    <script src="plugins/Metro-UI-CSS-master/docs/js/metro/metro-rating.js"></script>
+    <script src="plugins/Metro-UI-CSS-master/docs/js/metro/metro-dialog.js"></script>
+    <script src="plugins/Metro-UI-CSS-master/docs/js/metro.min.js"></script>
+    
+    <!-- Local JavaScript plugins -->
+    <script src="js/googleapi.js"></script>
+    <script src="js/autocompleteaddress.js"></script>
+    <script src="js/hoverintent.js"></script>
+    <title>Indians In Boston</title>
+
+    <style>
+        .container {
+            width: 1040px;
+            margin: auto;
+            padding: 30px 50px ;
+        }
+        #map-canvas
+        {
+            width: 250px;
+            height: 250px;
+        }
+        .customFont {
+            -webkit-text-stroke: 1px black;
+            color: white;
+            text-shadow:
+                3px 3px 0 #000,
+              -1px -1px 0 #000,  
+               1px -1px 0 #000,
+               -1px 1px 0 #000,
+                1px 1px 0 #000;
+        }
+        .metro .rating .score-hint {
+            display: block;
+            font-size: 12px;
+            color: white;
+          }
+          
+         .totop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            
+            width: 25px;
+            height: 23px;
+            }
+           .pac-container {
+                background-color: #FFF;
+                z-index: 1300 !important;
+                position: fixed;
+                display: inline-block;
+                float: left;
+            }
+            #signup{
+                z-index: 1200 !important ;   
+            }
+      
+
+    </style>
+ 
+    
+    <script>
+       
+       
+        $(window).scroll(function(){
+           if ($(this).scrollTop() > 100) {$('#gototop').fadeIn();} 
+           else {$('#gototop').fadeOut();$(".test").fadeOut();}
+           
+           if($(window).scrollTop() + $(window).height() === $(document).height()) {
+                    $(".test").fadeIn(100);
+                }
+         });
+         function topofpage(){
+            $('html, body').animate({
+              scrollTop: 0
+             }, 'slow');
+         };  
+       
+        function windowSignUp(){
+            $("#signup").dialog( "open" );
+        };
+        function callReset(){
+            $("#address").hide();
+        };
+        function dialogClose(){
+            $("#signup").dialog( "close" );
+        };
+        function signUp(){
+            $("#signup").dialog( "close" );
+        };
+         function windowQuickView(){
+             
+                    $.Dialog({
+                        overlay: true,
+                    shadow: true,
+                    flat: true,
+                    icon: false,
+                    title: 'Flat window',
+                    content: '',
+                    height:700,
+                    padding: 10,
+                    onShow: function(_dialog){
+                        var content = '<div class="tile-area no-padding clearfix"><div class="tile-group no-margin no-padding clearfix" style="width: 100%">'+
+                                '<div class="tile quadro double-vertical bg-darkBlue"><div class="tile-content">'+
+                                '<div class="padding10 customFont "><h1 class="fg-white ntm customFont">name</h1><h2 class="fg-white no-margin" >addr</h2><h2 class="fg-white no-margin" >addr</h2>'+
+                                '</div></div></div> <div class="tile quadro double-vertical ol-transparent"><div class="tile-content">'+
+                                '<div class="carousel" data-role="carousel" data-height="100%" data-width="100%" data-controls="false">'+
+                                '<div class="slide"><img src="images/1.jpg" alt="1"/></div><div class="slide"><img src="images/2.jpg" alt="2"/></div><div class="slide"><img src="images/3.jpg" alt="3"/> </div></div></div></div></div>';
+
+                        $.Dialog.title("Location");
+                        $.Dialog.content(content);
+                        $.Metro.initInputs();
+                    }
+                });
+                    $('.carousel').carousel({
+                    auto: false,
+                    period: 3000,
+                    duration: 2000,
+                    markers: {
+                        type: "cycle"
+                    }
+                });
+                };
+
+     </script>
+            
+<body class="metro" onload="initialize();">
+    <div id="fb-root"></div>
+    <div id="maps"></div>    
+    <div class="container">
+        <nav class="navigation-bar light fixed-top no-phone no-tablet">
+            <nav class="navigation-bar-content">
+                <div class="element">
+                    <a class="dropdown-toggle" href="home.html">Indians In Boston</a>
+                    
+                </div>
+         <!--search-->
+                <div class="element input-element">
+                    <form>
+                                <div class="input-control text nrm size5" >
+                                    <input type="text" name="q" id="place" placeholder="Search for Restaurants, Movies in Boston" onclick="nextPage()">
+                                    <button class="btn-search" onclick="nextPage()"></button>
+                                </div>
+                                
+                       
+                            </form>
+                </div>
+                <div id="login">
+                
+                    
+                    <span class="element-divider place-right"></span>
+                    <button class="element place-right" id="createWindow" onclick="windowSignUp();" >
+                        Sign Up <span class="icon-locked-2"></span>
+                </div>
+            </nav>
+        </nav>  
+        <form class="no-phone no-desktop on-tablet place-top-left">
+                                <div class="input-control text nrm size4" >
+                                    <input type="text" name="q" id="place1" placeholder="Search " onclick="nextPage1()">
+                                    <button class="btn-search" onclick="nextPage1()"></button>
+                                </div>
+         </form>
+         <form class="on-phone no-desktop no-tablet place-top-left">
+                                <div class="input-control text nrm size2" >
+                                    <input type="text" name="q" id="place2" placeholder="Search " onclick="nextPage2()">
+                                    <button class="btn-search" onclick="nextPage2()"></button>
+                                </div>
+         </form>
+        <div id="login" class="on-phone on-tablet no-desktop place-top-right">
+                    <span class="element-divider place-right"></span>
+                    <button class="element place-right" id="createWindow" onclick="windowSignUp();" >
+                        Sign Up <span class="icon-locked-2"></span>
+         </div>
+        <header class="margin5 nrm nlm">
+            <div class="clearfix nbm nbp">
+                <a class="place-left" href="home.html" title="">
+                    <h1>Indians In Boston</h1>
+                </a>
+            </div>
+            <!--horizontal menu-->
+                <nav class="horizontal-menu ntm ntp">
+                    <ul>
+                        <li>
+                            <a class="dropdown-toggle" href="#">restaurant</a>
+                            <ul class="dropdown-menu"  data-show='hover'>
+                                <li><a href="#">Indian</a></li>
+                                <li><a href="#">Chinese</a></li>
+                                <li><a href="#">Thai</a></li>
+                                <li><a href="#">American</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="dropdown-toggle" href="#">movies</a>
+                            <ul class="dropdown-menu" data-role="dropdown" data-show='hover'>
+                                <li><a href="#">Bollywood</a></li>
+                                <li><a href="#">Hollywood</a></li>
+                                <li><a href="#">International</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+        </header>         
+         
+        <div class="clearfix">
+            <div class="tile-area no-padding clearfix">
+                <div class="tile-group no-margin no-padding clearfix" style="width: 100%">
+                    <div class="tile quadro double-vertical ol-transparent no-phone-portrait">
+                        <div class="tile-content" >
+                            <div class="carousel" data-role="carousel" data-height="100%" data-width="100%" data-controls="false">
+                                <div class="slide">
+                                    <img src="images/1.jpg" alt="1"/>
+                                </div>
+                                <div class="slide">
+                                    <img src="images/2.jpg" alt="2"/>
+                                </div>
+                                <div class="slide">
+                                    <img src="images/3.jpg" alt="3"/>
+                                </div>
+                            </div>  <!--carousel end-->
+                        </div>
+                    </div>
+                    
+                    <div class="tile double double-vertical" data-role="live-tile" data-effect="slideUp" >
+                         <div class="tile-content" id="weatherimage" >
+                            <!--<img src="images/rain.gif" class="opacity">-->
+                            <div class="padding10 customFont">
+                                <h1 class="fg-white ntm customFont" id="temp_F"></h1>
+                                <h2 class="fg-white no-margin" id = "city"></h2>
+                                <h2 class="fg-white no-margin" id="weather"></h2>
+                                <p class="tertiary-text fg-white" ></p>
+                                
+                            </div>
+                         </div>
+                        <div class="tile-content" id="weathermapimage"></div>
+                        <div class="brand bg-dark opacity"><span class="text" id="message">Weather Map</span></div>
+
+                    </div>
+                    
+                    <div class="tile double ol-transparent bg-teal padding20 no-tablet-landscape "  >
+                        <div class="tile-content" style="padding: 15px 15px;">
+                            <div class="fb-like" data-href="https://www.facebook.com/indiansinboston" data-width="220" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
+                        </div>
+                    </div>
+                 
+                    <div class="tile double ol-transparent bg-green no-tablet-landscape "  data-role="live-tile" data-effect="slideUp">
+                        <div class="tile-content" style="padding: 30px 95px;">
+                            <!-- Place this tag where you want the +1 button to render. -->
+                            <div class="g-plusone" data-size="tall" ></div>
+                       </div>
+                        <div class="tile-content icon"><span class="icon-facebook"></span></div>
+                        <div class="tile-content icon"><span class="icon-instagram"></span></div> 
+                            
+                       </div>
+                    </div>
+                    
+                   
+                    
+                </div><!-- End first group -->
+                
+                <div class="tile-group no-margin no-padding1 clearfix" id="likeGroup" style="width: 100%;">
+                    <br/><br/><a href="#"><span class="tile-group-title fg-orange">You Might Like <span class="icon-arrow-right-5"></span></span></a>
+                    <div class="tile quadro double-vertical no-phone-portrait"></div>
+                    <div class="tile double double-vertical "></div>
+                    <div class="tile double "></div>
+                    <div class="tile no-phone-portrait "></div>
+                    <div class="tile no-phone-portrait"></div>
+                    <div class="tile no-phone-portrait "></div>
+                    <div class="tile no-phone-portrait"></div>
+                    <div class="tile double "></div>
+                    <div class="tile double"></div>
+                    <div class="tile double"></div>
+                </div>
+                
+                <div class="tile-group no-margin no-padding1 clearfix" id="restaurantsGroup" style="width: 100%;">
+                    <br/><br/><a href="#"><span class="tile-group-title fg-cobalt">RESTAURANTS <span class="icon-arrow-right-5"></span></span></a>
+                    <div class="tile quadro double-vertical ol-transparent no-phone-portrait"></div>
+                    <div class="tile double ol-transparent"></div>
+                    <div class="tile ol-transparent no-phone-portrait"></div>
+                    <div class="tile ol-transparent no-phone-portrait"></div>
+                    <div class="tile ol-transparent no-phone-portrait"></div>
+                    <div class="tile ol-transparent no-phone-portrait"></div>
+                    <div class="tile double ol-transparent no-tablet-portrait"></div><div class="tile double ol-transparent on-tablet no-desktop"></div>
+                    
+                    <div class="test" >
+                        <div class="tile quadro double-vertical ol-transparent no-phone-portrait"></div>
+                        <div class="tile double ol-transparent"></div>
+                        <div class="tile ol-transparent no-phone-portrait"></div>
+                        <div class="tile ol-transparent no-phone-portrait"></div>
+                        <div class="tile ol-transparent no-phone-portrait"></div>
+                        <div class="tile ol-transparent no-phone-portrait"></div>
+                        <div class="tile double ol-transparent no-tablet-portrait"></div><div class="tile double ol-transparent on-tablet no-desktop"></div>
+                    </div>
+                </div>
+            </div>
+         <!-- End of tiles -->
+
+        <footer>
+            <div class="bottom-menu-wrapper">
+                <ul class="horizontal-menu compact">
+                    <li>&copy; 2014 Dhaval Doshi</li>
+                    <li class="no-phone"><a href="#">Privacy</a></li>
+                    <li class="no-phone"><a href="#">Legal</a></li>
+                    <li class="no-phone"><a href="#">Advertise</a></li>
+                    <li class="no-phone"><a href="#">Help</a></li>
+                    <li class="no-phone"><a href="#">Feedback</a></li>
+                </ul>
+            </div>
+            <div class="totop" id="gototop" onclick="topofpage()">
+                <a href="javascript:void(0)" class="totop icon-arrow-up-5" >Top</a>
+            </div>
+        </footer>
+        </div>
+    <div id="signup" title="Sign Up" class="size4">
+        <form autocomplete="off"> 
+            
+                <label>First Name</label><div class="input-control text"><input type="text" name="firstname" required><button class="btn-clear"></button></div>
+                
+                <label>Email- ID</label><div class="input-control email"><input type="email" name="email" id="email" required ><button class="btn-clear"></button></div> 
+                <label>Password</label><div class="input-control password"><input type="password" name="password" required><button class="btn-reveal"></button></div>  
+                <label>Address</label><div class="input-control text"><input type="text" name="address" id="autocompleteaddress" onfocus="geolocate()" required><button class="btn-clear"></button></div>
+                
+                <div id="address" style="display:none;">
+                    <label>Street Number</label><div class="input-control text"><input class="field" id="street_number" required><button class="btn-clear"></button></div>
+                    <label>Street Name</label><div class="input-control text"><input class="field" id="route" required><button class="btn-clear"></button></div>
+                    <label>City</label><div class="input-control text"><input class="field" id="locality" required><button class="btn-clear"></button></div>
+                    <label>State</label><div class="input-control text"><input class="field" id="administrative_area_level_1" required><button class="btn-clear"></button></div>
+                    <label>Zip Code</label><div class="input-control text"><input class="field" id="postal_code" required><button class="btn-clear"></button></div>
+                    <label>Country</label><div class="input-control text"><input class="field" id="country" required><button class="btn-clear"></button></div>
+                 </div>
+                <div class="input-control checkbox"><label><input type="checkbox" name="c1" checked required/><span class="check"></span>Please check here to agree to terms & conditions</label></div>
+                <div class="form-actions"> 
+                    <button class="button primary" onclick="signUp()">Sign Up</button> 
+                    <button class="button" type="reset" id="reset" onclick="callReset()">Reset</button> 
+                    <button class="button" onclick="dialogClose()">Cancel</button> 
+                </div>
+                </form>
+    </div>     
+       
+     <script type="text/javascript">
+     (function() {
+       var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+       po.src = 'https://apis.google.com/js/platform.js';
+       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+     })();                
+     
+     (function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+                fjs.parentNode.insertBefore(js, fjs);
+              }(document, 'script', 'facebook-jssdk'));
+              
+    </script>
+</body>
+</html>

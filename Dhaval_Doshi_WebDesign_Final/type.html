@@ -1,0 +1,342 @@
+
+<!DOCTYPE html>
+<head>
+  
+	 <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   
+    <meta name="description" content="Simple responsive css framework">
+    <meta name="author" content="Dhaval Doshi">
+
+    <link href="plugins/Metro-UI-CSS-master/docs/css/metro-bootstrap.css" rel="stylesheet">
+    <link href="plugins/Metro-UI-CSS-master/docs/css/metro-bootstrap-responsive.css" rel="stylesheet">
+    <link href="plugins/Metro-UI-CSS-master/docs/css/iconFont.css" rel="stylesheet">
+
+    <!-- Load JavaScript Libraries -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js" ></script>
+    <script src="plugins/Metro-UI-CSS-master/docs/js/jquery/jquery.widget.min.js"></script>
+    <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=weather"></script>-->
+    <script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
+    
+    <!-- Metro UI CSS JavaScript plugins -->
+    <script src="plugins/Metro-UI-CSS-master/docs/js/load-metro.js"></script>
+    <script src="plugins/Metro-UI-CSS-master/docs/js/metro/metro-dropdown.js"></script>
+    <script src="plugins/Metro-UI-CSS-master/docs/js/metro/metro-rating.js"></script>
+    <script src="plugins/Metro-UI-CSS-master/docs/js/metro.min.js"></script>
+    
+    <!-- Local JavaScript plugins -->
+    <script src="js/googleapi.js"></script>
+    <title>Indians In Boston</title>
+ 
+  <script src="js/jquery.sticky.js"></script>
+
+  <script>
+     
+    
+   
+    function closePan()
+    {
+        $("#closePanel").toggle("slow");
+        $("#changetext1").toggle();
+        $("#changetext2").toggle();
+        $("#closePanel2").toggle("slow");
+        $("#changetext11").toggle();
+        $("#changetext22").toggle();
+    }
+    $(document).scroll(function() {
+    var cutoff = $(window).scrollTop();
+    $('#locations li').removeClass('top').each(function() {
+        if ($(this).offset().top > cutoff) {
+            $(this).addClass('top');
+            return false; // stops the iteration after the first one on screen
+        }
+    });
+});
+  </script>
+  <style>
+
+* { margin: 0; padding: 0; }
+body { font: 14px Georgia, serif; color: #222; }
+.container {
+            width: 1040px;
+            margin: auto;
+            
+        }
+article, aside, figure, footer, header, hgroup,
+menu, nav, section { display: block; }
+
+#page-wrap { width: 1115px; margin:auto; }
+#map_canvas { width: 100%; height: 500px; width: 300px; float: left; position: relative; z-index: 30;display: inline; }
+
+h1 { margin: 0 0 15px 0; font: bold 48px Helvetica, Arial, Sans-Serif; letter-spacing: -2px; }
+h2 { margin: 0 0 15px 0; font: bold 32px Helvetica, Arial, Sans-Serif; letter-spacing: -1px; text-shadow: 0 1px 0px rgba(255,255,255,0.3); }
+h3 { margin: 0 0  1px 0; font: bold 18px Helvetica, Arial, Sans-Serif; letter-spacing: -1px; }
+
+
+#locations { list-style: none; width: 350px; float: left;  }
+#locations li { padding: 10px; width: 1095px; float: left; position: relative; z-index: 20; }
+#locations li:hover, #locations li.hover { background: #ffe8b2 url(../images/shadow.png) 128px 0 repeat-y; }
+#locations li:hover h3, #locations li.hover h3 { color: red; text-shadow: 0 1px 0px rgba(255,255,255,0.3); }
+
+
+#content { width: 300px;  }
+
+#more-info { width: 440px; float: right; background: #ffe8b2; padding: 20px; height: 630px; margin-left: 20px; }
+#more-info * { position: relative; z-index: 40; display:inline-block;}
+#more-info > div { background: #e9e2bf; -moz-box-shadow: 0 0 14px rgba(70,49,1,0.5); -webkit-box-shadow: 0 0 14px rgba(70,49,1,0.5); padding: 20px; height: 590px; width:400px;}
+.longdesc { display: none; }
+#changetext2{display: none;}
+#stick{
+    display: inline;
+    position: relative;
+    z-index: 30;
+}
+
+.metro .grid .row div.span3
+{
+    width:255px !important;
+    padding:10px;
+    margin-right: 20px;
+}
+ .totop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            
+            width: 25px;
+            height: 23px;
+            }
+   ul
+   {
+       list-style-type: none;
+   }
+</style>
+</head>
+
+<body class="metro" onload="initializeList()">
+    <div id="maps"></div>   
+    <div class="container">
+    <nav class="navigation-bar light fixed-top no-phone no-tablet">
+            <nav class="navigation-bar-content">
+                <div class="element">
+                    <a class="dropdown-toggle" href="home.html">Indians In Boston</a>
+                    
+                </div>
+         <!--search-->
+                <div class="element input-element">
+                    <form>
+                                <div class="input-control text nrm size5" >
+                                    <input type="text" name="q" id="place" placeholder="Search for Restaurants, Movies in Boston" onclick="nextPage()">
+                                    <button class="btn-search" onclick="nextPage()"></button>
+                                </div>
+                            </form>
+                </div>
+                <div id="login">
+                
+                    
+                    <span class="element-divider place-right"></span>
+                    <button class="element place-right" id="createWindow" onclick="windowSignUp();" >
+                        Dhaval Doshi <span class="icon-locked-2"></span>
+                </div>
+            </nav>
+        </nav>  
+        <form class="no-phone no-desktop on-tablet place-top-left">
+                                <div class="input-control text nrm size4" >
+                                    <input type="text" name="q" id="place" placeholder="Search " onclick="nextPage()">
+                                    <button class="btn-search" onclick="nextPage()"></button>
+                                </div>
+         </form>
+         <form class="on-phone no-desktop no-tablet place-top-left">
+                                <div class="input-control text nrm size2" >
+                                    <input type="text" name="q" id="place" placeholder="Search " onclick="nextPage()">
+                                    <button class="btn-search" onclick="nextPage()"></button>
+                                </div>
+         </form>
+        <div id="login" class="on-phone on-tablet no-desktop place-top-right">
+                    <span class="element-divider place-right"></span>
+                    <button class="element place-right" id="createWindow" onclick="windowSignUp();" >
+                        Sign Up <span class="icon-locked-2"></span>
+         </div>
+        
+    <header class="margin20 nrm nlm" style="margin-top: 40px; padding: 0px;">
+            <div class="clearfix nbm nbp">
+                <a class="place-left" href="home.html" title="">
+                    <h1>Indians In Boston</h1>
+                </a>
+            </div>
+            <!--horizontal menu-->
+                <nav class="horizontal-menu ntm ntp">
+                    <ul>
+                        <li>
+                            <a class="dropdown-toggle" href="#">restaurant</a>
+                            <ul class="dropdown-menu"  data-show='hover'>
+                                <li><a href="#">Indian</a></li>
+                                <li><a href="#">Chinese</a></li>
+                                <li><a href="#">Thai</a></li>
+                                <li><a href="#">American</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="dropdown-toggle" href="#">movies</a>
+                            <ul class="dropdown-menu" data-role="dropdown" data-show='hover'>
+                                <li><a href="#">Bollywood</a></li>
+                                <li><a href="#">Hollywood</a></li>
+                                <li><a href="#">International</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+        </header>  
+         
+    <div id="page-wrap">
+            <div class="grid no-phone no-tablet on-desktop" style=" margin:auto; margin-bottom: 30px; padding: auto; width: 1195px; ">
+                <i class="icon-arrow-down-4 on-right" onclick="closePan();"><span id="changetext1">Close</span><span id="changetext2">Open Filters</span></i>
+                <div class="row" id="closePanel">
+                   <div class="span3" >
+                       <div>
+                           <div class="panel" data-role="panel">
+                                <div class="panel-header">Type</div>
+                                <div class="panel-content" id="panelContent">
+                                    <ul>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="l1" onclick="initializeList()"/><span class="check"></span>Food</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="l2" /><span class="check"></span>Restaurant</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="l3" /><span class="check"></span>Bar</label></div></li>
+                                    </ul>
+                                </div>
+                            </div>
+                       </div> 
+                   </div>
+                   <div class="span3" >
+                       <div>
+                           <div class="panel" data-role="panel">
+                                <div class="panel-header">Distance</div>
+                                <div class="panel-content">
+                                    <ul>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="d1" /><span class="check"></span>less than 1 mile</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="d2" /><span class="check"></span>less than 5 miles</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="d3" /><span class="check"></span>less than 10 miles</label></div></li>
+                                    </ul>
+                                </div>
+                            </div>
+                       </div> 
+                   </div>
+                   <div class="span3" >
+                       <div>
+                          <div>
+                           <div class="panel" data-role="panel">
+                                <div class="panel-header">Price</div>
+                                <div class="panel-content">
+                                   <ul>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="p1" /><span class="check"></span>$</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="p2" /><span class="check"></span>$$</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="p3" /><span class="check"></span>$$$</label></div></li>
+                                    </ul>
+                                </div>
+                            </div>
+                       </div> 
+                       </div>
+                   </div>
+                   <div class="span3" >
+                       <div>
+                           <div>
+                           <div class="panel" data-role="panel">
+                                <div class="panel-header">Features</div>
+                                <div class="panel-content">
+                                    <ul>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="f1" /><span class="check"></span>Open Now</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="f2" /><span class="check"></span>TakeOut</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="f3" /><span class="check"></span>Deals</label></div></li>
+                                    </ul>
+                                </div>
+                            </div>
+                       </div> 
+                       </div> 
+                   </div>
+                   
+                    </div>
+                </div>
+              <div class="grid no-desktop on-tablet on-phone" >
+                <i class="icon-arrow-down-4 on-right" onclick="closePan();"><span id="changetext11" style="display: none;">Close</span><span id="changetext22">Open Filters</span></i>
+                <div class="row" id="closePanel2" style="display: none;">
+                   <div class="span2" >
+                       <div>
+                           <div class="panel " data-role="panel">
+                                <div class="panel-header">Type</div>
+                                <div class="panel-content" id="panelContent">
+                                    <ul>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="l1" onclick="initializeList()"/><span class="check"></span>Food</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="l2" /><span class="check"></span>Restaurant</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="l3" /><span class="check"></span>Bar</label></div></li>
+                                    </ul>
+                                </div>
+                            </div>
+                       </div> 
+                   </div>
+                   <div class="span2" >
+                       <div>
+                           <div class="panel " data-role="panel">
+                                <div class="panel-header">Distance</div>
+                                <div class="panel-content">
+                                    <ul>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="d1" /><span class="check"></span>less than 1 mile</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="d2" /><span class="check"></span>less than 5 miles</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="d3" /><span class="check"></span>less than 10 miles</label></div></li>
+                                    </ul>
+                                </div>
+                            </div>
+                       </div> 
+                   </div>
+                   <div class="span2" >
+                       <div>
+                          <div>
+                           <div class="panel " data-role="panel">
+                                <div class="panel-header">Price</div>
+                                <div class="panel-content">
+                                   <ul>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="p1" /><span class="check"></span>$</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="p2" /><span class="check"></span>$$</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="p3" /><span class="check"></span>$$$</label></div></li>
+                                    </ul>
+                                </div>
+                            </div>
+                       </div> 
+                       </div>
+                   </div>
+                   <div class="span2" >
+                       <div>
+                           <div>
+                           <div class="panel " data-role="panel">
+                                <div class="panel-header">Features</div>
+                                <div class="panel-content">
+                                    <ul>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="f1" /><span class="check"></span>Open Now</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="f2" /><span class="check"></span>TakeOut</label></div></li>
+                                        <li><div class="input-control checkbox"><label><input type="checkbox" name="f3" /><span class="check"></span>Deals</label></div></li>
+                                    </ul>
+                                </div>
+                            </div>
+                       </div> 
+                       </div> 
+                   </div>
+                   
+                    </div>
+                </div>      
+        
+	   <ul id="locations" ></ul>
+            <div id="stick">
+               <div id="map_canvas" ></div>
+
+               <div id="more-info" class="no-phone no-tablet"><div>
+
+               <h2>More Info</h2>
+               <p>Hover over location on the left. (JavaScript must be enabled)</p>
+
+            </div></div>
+            </div>	
+         </div>
+    </div>   
+         
+</body>
+
+</html>
